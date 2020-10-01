@@ -126,14 +126,23 @@ void TSet::InFile(std::string file_name)
     else
     {
         std::cout << "Файл открыт" << std::endl;
+        fs << "{";
         for (int i = 0; i < BitField.GetLength(); i++)
         {
             if (BitField.GetBit(i))
             {
-                fs << i;
-                fs << " ";
+                if (i == BitField.GetLength() - 1)
+                {
+                    fs << i;
+                }
+                else
+                {
+                    fs << i;
+                    fs << ", ";
+                }
             }
         }
+        fs << "}";
     }
     fs.close();
 }
@@ -149,46 +158,141 @@ void TSet::FromFile(std::string file_name)
     else
     {
         std::cout << "Файл открыт" << std::endl;
-        int Num_elem;
-        int elem;
-        fs >> Num_elem;
-        for (int i = 0; i < Num_elem; i++)
+        std::string str;
+        getline(fs, str);
+        str = DelBadSymb(str);
+        int NumOfDig = CountNumOfDig(str);
+        std::string* arrStr = new std::string[NumOfDig];
+        int* arrInt = new int[NumOfDig];
+        StrToArrStr(str, arrStr);
+        ArrStrToArrInt(arrStr, arrInt, NumOfDig);
+        int Max = FindMaxElem(arrInt, NumOfDig);
+        TSet res(Max + 1);
+        for (int i = 0; i < NumOfDig; i++)
         {
-            fs >> elem;
-            InsElem(elem);
+            res.InsElem(arrInt[i]);
         }
+        *this = res;
+        delete[] arrStr;
+        delete[] arrInt;
     }
     fs.close();
 }
 
 // перегрузка ввода/вывода
 
-istream &operator>>(istream &istr, TSet &s) // ввод
+istream& operator>>(istream& istr, TSet& s) // ввод
 {
-    int Num_elem;
-    int elem;
-    istr >> Num_elem;
-    for (int i = 0; i < Num_elem; i++)
+    std::string str;
+    getline(istr, str);
+    str = DelBadSymb(str);
+    int NumOfDig = CountNumOfDig(str);
+    std::string* arrStr = new std::string[NumOfDig];
+    int* arrInt = new int[NumOfDig];
+    StrToArrStr(str, arrStr);
+    ArrStrToArrInt(arrStr, arrInt, NumOfDig);
+    int Max = FindMaxElem(arrInt, NumOfDig);
+    TSet res(Max + 1);
+    for (int i = 0; i < NumOfDig; i++)
     {
-        istr >> elem;
-        s.InsElem(elem);
+        res.InsElem(arrInt[i]);
     }
+    s = res;
+    delete[] arrStr;
+    delete[] arrInt;
     return istr;
 }
 
 ostream& operator<<(ostream &ostr, const TSet &s) // вывод
 {
+    std::cout << "{";
     for (int i = 0; i < s.BitField.GetLength(); i++)
     {
         if (s.BitField.GetBit(i))
         {
-            ostr << i;
-            ostr << " ";
-        }
-        else
-        {
-            ostr << "";
+            if (i == s.BitField.GetLength() - 1)
+            {
+                ostr << i;
+            }
+            else
+            {
+                ostr << i;
+                ostr << ", ";
+            }
         }
     }
+    std::cout << "}";
     return ostr;
+}
+
+std::string DelBadSymb(std::string str)
+{
+    std::string tmp = "";
+    for (int i = 0; i < str.length(); i++)
+    {
+        if (str[i] != '{' && str[i] != '}' && str[i] != ',')
+        {
+            tmp += str[i];
+        }
+    }
+    return tmp;
+}
+
+int CountNumOfDig(const std::string& str)
+{
+    int result = 1;
+    for (int i = 0; i < str.length(); i++)
+    {
+        if (str[i] == ' ')
+        {
+            result += 1;
+        }
+    }
+    return result;
+}
+
+void StrToArrStr(std::string str, std::string* arr)
+{
+    int count = 0;
+    for (int i = 0; i < str.length(); i++)
+    {
+        if (str[i] != ' ')
+        {
+            arr[count] += str[i];
+        }
+        else
+            count++;
+    }
+}
+
+int StrToInt(std::string str)
+{
+    int result = 0;
+    for (int i = 0; i < str.length(); i++)
+    {
+        result = result * 10 + (str[i] - '0');
+    }
+
+    return result;
+}
+
+void ArrStrToArrInt(std::string* arrStr, int* arrInt, int len)
+{
+    for (int i = 0; i < len; i++)
+    {
+        arrInt[i] = StrToInt(arrStr[i]);
+    }
+}
+
+int FindMaxElem(int* arr, int len)
+{
+    int max = 0;
+    for (int i = 0; i < len; i++)
+    {
+        if (arr[i] > max)
+        {
+            max = arr[i];
+        }
+    }
+    return max;
 }
