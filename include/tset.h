@@ -9,7 +9,7 @@
 #define __SET_H__
 
 #include "tbitfield.h"
-
+#include <string>
 class TSet
 {
 private:
@@ -37,6 +37,9 @@ public:
   TSet operator+ (const TSet &s);  // объединение
   TSet operator* (const TSet &s);  // пересечение
   TSet operator~ (void);           // дополнение
+
+  void InFile(std::string file_name);
+  void FromFile(std::string file_name);
 
   friend istream &operator>>(istream &istr, TSet &bf);
   friend ostream &operator<<(ostream &ostr, const TSet &bf);

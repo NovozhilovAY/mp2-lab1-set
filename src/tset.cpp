@@ -43,18 +43,12 @@ int TSet::IsMember(const int Elem) const // элемент множества?
 
 void TSet::InsElem(const int Elem) // включение элемента множества
 {
-    if (Elem <= MaxPower && Elem >= 0)
-    {
-        BitField.SetBit(Elem);
-    }
+    BitField.SetBit(Elem);
 }
 
 void TSet::DelElem(const int Elem) // исключение элемента множества
 {
-    if (IsMember(Elem))
-    {
-        BitField.ClrBit(Elem);
-    }
+    BitField.ClrBit(Elem);
 }
 
 // теоретико-множественные операции
@@ -68,33 +62,18 @@ TSet& TSet::operator=(const TSet &s) // присваивание
 
 int TSet::operator==(const TSet &s) const // сравнение
 {
-    if (BitField == s.BitField)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    return BitField == s.BitField;
 }
 
 int TSet::operator!=(const TSet &s) const // сравнение
 {
-    if (BitField != s.BitField)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    return BitField != s.BitField;
 }
 
 TSet TSet::operator+(const TSet &s) // объединение
 {
     TSet res(BitField.GetLength());
     res = BitField | s.BitField;
-    res.MaxPower = res.BitField.GetLength();
     return res;
 }
 
@@ -116,7 +95,7 @@ TSet TSet::operator+(const int Elem) // объединение с элемент
 TSet TSet::operator-(const int Elem) // разность с элементом
 {
     TSet res(BitField);
-    res.BitField.ClrBit(Elem);
+    res.DelElem(Elem);
     return res;
 }
 
@@ -136,25 +115,64 @@ TSet TSet::operator~(void) // дополнение
     return res;
 }
 
+void TSet::InFile(std::string file_name)
+{
+    fstream fs;
+    fs.open(file_name, fstream::in | fstream::out);
+    if (!fs.is_open())
+    {
+        std::cout << "Ошибка открытия файла!" << std::endl;
+    }
+    else
+    {
+        std::cout << "Файл открыт" << std::endl;
+        for (int i = 0; i < BitField.GetLength(); i++)
+        {
+            if (BitField.GetBit(i))
+            {
+                fs << i;
+                fs << " ";
+            }
+        }
+    }
+    fs.close();
+}
+
+void TSet::FromFile(std::string file_name)
+{
+    fstream fs;
+    fs.open(file_name, fstream::in | fstream::out);
+    if (!fs.is_open())
+    {
+        std::cout << "Ошибка открытия файла!" << std::endl;
+    }
+    else
+    {
+        std::cout << "Файл открыт" << std::endl;
+        int Num_elem;
+        int elem;
+        fs >> Num_elem;
+        for (int i = 0; i < Num_elem; i++)
+        {
+            fs >> elem;
+            InsElem(elem);
+        }
+    }
+    fs.close();
+}
+
 // перегрузка ввода/вывода
 
 istream &operator>>(istream &istr, TSet &s) // ввод
 {
-    std::string str;
-    istr >> str;
-    TSet tmp(str.size());
-    for (int i = 0; i < str.size(); i++)
+    int Num_elem;
+    int elem;
+    istr >> Num_elem;
+    for (int i = 0; i < Num_elem; i++)
     {
-        if (str[i] == '1')
-        {
-            tmp.BitField.SetBit(i);
-        }
-        else
-        {
-            tmp.BitField.ClrBit(i);
-        }
+        istr >> elem;
+        s.InsElem(elem);
     }
-    s = tmp;
     return istr;
 }
 
@@ -164,11 +182,12 @@ ostream& operator<<(ostream &ostr, const TSet &s) // вывод
     {
         if (s.BitField.GetBit(i))
         {
-            ostr << "1";
+            ostr << i;
+            ostr << " ";
         }
         else
         {
-            ostr << "0";
+            ostr << "";
         }
     }
     return ostr;

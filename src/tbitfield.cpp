@@ -188,6 +188,62 @@ TBitField TBitField::operator~(void) // отрицание
 	return res;
 }
 
+void TBitField::InFile(std::string file_name)
+{
+	fstream fs;
+	fs.open(file_name, fstream::in | fstream::out);
+	if (!fs.is_open())
+	{
+		std::cout << "Ошибка открытия файла!" << std::endl;
+	}
+	else
+	{
+		std::cout << "Файл открыт" << std::endl;
+		for (int i = 0; i < GetLength(); i++)
+		{
+			if (GetBit(i))
+			{
+				fs << "1";
+			}
+			else
+			{
+				fs << "0";
+			}
+		}
+	}
+	fs.close();
+}
+
+void TBitField::FromFile(std::string file_name)
+{
+	fstream fs;
+	fs.open(file_name, fstream::in | fstream::out);
+	if (!fs.is_open())
+	{
+		std::cout << "Ошибка открытия файла!" << std::endl;
+	}
+	else
+	{
+		std::cout << "Файл открыт" << std::endl;
+		std::string str;
+		fs >> str;
+		TBitField tmp(str.size());
+		for (int i = 0; i < str.size(); i++)
+		{
+			if (str[i] == '1')
+			{
+				tmp.SetBit(i);
+			}
+			else
+			{
+				tmp.ClrBit(i);
+			}
+		}
+		*this = tmp;
+	}
+	fs.close();
+}
+
 // ввод/вывод
 
 istream &operator>>(istream &istr, TBitField &bf) // ввод
