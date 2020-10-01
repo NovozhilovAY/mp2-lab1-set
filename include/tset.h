@@ -9,7 +9,7 @@
 #define __SET_H__
 
 #include "tbitfield.h"
-
+#include <string>
 class TSet
 {
 private:
@@ -17,6 +17,7 @@ private:
   TBitField BitField; // битовое поле для хранения характеристического вектора
 public:
   TSet(int mp);
+  
   TSet(const TSet &s);       // конструктор копирования
   TSet(const TBitField &bf); // конструктор преобразования типа
   operator TBitField();      // преобразование типа к битовому полю
@@ -37,7 +38,18 @@ public:
   TSet operator* (const TSet &s);  // пересечение
   TSet operator~ (void);           // дополнение
 
+  void InFile(std::string file_name);
+  void FromFile(std::string file_name);
+
   friend istream &operator>>(istream &istr, TSet &bf);
   friend ostream &operator<<(ostream &ostr, const TSet &bf);
+  
 };
+
+std::string DelBadSymb(std::string str);
+int CountNumOfDig(const std::string& str);
+void StrToArrStr(std::string str, std::string* arr);
+int StrToInt(std::string str);
+void ArrStrToArrInt(std::string* arrStr, int* arrInt, int len);
+int FindMaxElem(int* arr, int len);
 #endif

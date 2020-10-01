@@ -4,10 +4,10 @@
 //   Переработано для Microsoft Visual Studio 2008 Сысоевым А.В. (19.04.2015)
 //
 // Тестирование битового поля и множества
-
+/*
 #include <iomanip>
 
-// #define USE_SET // Использовать класс TSet,
+#define USE_SET // Использовать класс TSet,
                 // закоментировать, чтобы использовать битовое поле
 
 #ifndef USE_SET // Использовать класс TBitField
@@ -24,6 +24,7 @@ int main()
   cout << "Введите верхнюю границу целых значений - ";
   cin  >> n;
   TBitField s(n + 1);
+  
   // заполнение множества
   for (m = 2; m <= n; m++)
     s.SetBit(m);
@@ -49,6 +50,7 @@ int main()
     }
   cout << endl;
   cout << "В первых " << n << " числах " << count << " простых" << endl;
+
 }
 #else
 
@@ -92,3 +94,4 @@ int main()
 }
 
 #endif
+*/
